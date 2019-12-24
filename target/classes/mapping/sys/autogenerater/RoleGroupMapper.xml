@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.RoleGroupMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.vo.RoleGroupVo">
+      <result column="id" jdbcType="VARCHAR" property="id" />
+      <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+  </resultMap>
+  
+  <sql id="columnList">
+      id, group_name
+  </sql>
+  
+  <!--删除 -->
+  <delete id="deleteByParams" parameterType="java.util.Map">
+        update sys_role_group set sys_role_group.is_delete=1,sys_role_group.modify_user=#{modifyUser,jdbcType=VARCHAR},
+        sys_role_group.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+        WHERE sys_role_group.id IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			 #{item}
+	     </foreach>
+    </delete>
+  
+  <insert id="insert"  parameterType="com.goshine.ptadmui.sys.entity.RoleGroup">
+    insert into sys_role_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">id,</if>
+      <if test="groupName != null">group_name,</if>
+      <if test="createUser != null">create_user,</if>
+      <if test="createDate != null">create_date,</if>
+      <if test="modifyUser != null">modify_user,</if>
+      <if test="modifyDate != null">modify_date,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">#{id,jdbcType=VARCHAR},</if>
+      <if test="groupName != null">#{groupName,jdbcType=VARCHAR},</if>
+      <if test="createUser != null">#{createUser,jdbcType=VARCHAR},</if>
+      <if test="createDate != null">#{createDate,jdbcType=TIMESTAMP},</if>
+      <if test="modifyUser != null">#{modifyUser,jdbcType=VARCHAR},</if>
+      <if test="modifyDate != null">#{modifyDate,jdbcType=TIMESTAMP},</if>
+    </trim>
+  </insert>
+  
+  <update id="update"  parameterType="com.goshine.ptadmui.sys.entity.RoleGroup">
+    update sys_role_group
+    <set>
+      <if test="groupName != null">
+        group_name = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+     where sys_role_group.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+   <!--根据条件查询-->
+   <select id="queryAll"  resultMap="resultMap" >
+       SELECT sys_role_group.id,sys_role_group.group_name FROM sys_role_group
+       WHERE sys_role_group.is_delete=0
+       <if test="name!=null and name!='' ">
+	      AND (EXISTS(
+			  SELECT 1 FROM sys_role WHERE sys_role.role_group_id=sys_role_group.id AND sys_role.is_delete=0
+			  AND sys_role.role_name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+		   )
+		   OR sys_role_group.group_name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%'))
+	    </if>
+       ORDER BY sys_role_group.id ASC
+   </select>
+</mapper>

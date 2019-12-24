@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.MessageMapper">
+	<resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.Message">
+	  <result column="id"  jdbcType="VARCHAR"  property="id" />
+	  <result column="user_id"  jdbcType="VARCHAR"  property="userId" />
+	  <result column="title"  jdbcType="VARCHAR"  property="title" />
+	  <result column="content"  jdbcType="VARCHAR"  property="content" />
+	  <result column="type"  jdbcType="TINYINT"  property="type" />
+	  <result column="send_time"  jdbcType="TIMESTAMP"  property="sendTime" />
+	  <result column="read_flag"  jdbcType="BIT"  property="readFlag" />
+	  <result column="read_time"  jdbcType="TIMESTAMP"  property="readTime" />
+	</resultMap>
+	
+	<sql id="columnList">
+	  id,user_id,title,content,type,send_time,read_flag,read_time
+	</sql>
+	
+    <!--新增 -->
+	<insert id="insert"  parameterType="com.goshine.ptadmui.sys.entity.Message">
+		insert into sys_message(id,user_id,title,content,type,send_time,read_flag)
+		values(#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, #{sendTime,jdbcType=TIMESTAMP},
+		#{readFlag,jdbcType=BIT})
+	</insert>
+  
+    <!-- 根据message_id更新read信息 -->
+	<update id="update"  parameterType="com.goshine.ptadmui.sys.entity.Message">
+		update sys_message set read_flag=1,read_time=#{readTime,jdbcType=TIMESTAMP} where id=#{id,jdbcType=VARCHAR}
+	</update>
+	
+	<!--删除 -->
+	<delete id="deleteByParams"  parameterType="java.util.Map">
+        delete from sys_message WHERE sys_message.id IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			 #{item}
+	     </foreach>
+    </delete>
+    
+    <!-- 根据用户id查询消息数量 -->
+	<select id="queryCountByUserId"  parameterType="com.goshine.ptadmui.sys.entity.Message"  resultType="com.goshine.ptadmui.sys.vo.MessageVo">
+		select COUNT(1) totalCount,SUM(sys_message.read_flag) readCount from sys_message where sys_message.user_id=#{userId,jdbcType=VARCHAR}
+		<if test="readFlag!=null">
+			and sys_message.read_flag=#{readFlag,jdbcType=BIT}
+		</if>
+	</select>
+	
+	<!--根据条件查询-->
+    <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.Message"  resultMap="resultMap" >
+        SELECT sys_message.id,sys_message.user_id,sys_message.title,sys_message.content,sys_message.type,sys_message.send_time,
+		sys_message.read_flag,sys_message.read_time,sys_user.`name` userName FROM sys_message
+		INNER JOIN sys_user ON sys_user.id=sys_message.user_id AND sys_user.is_delete=0
+		WHERE 1=1
+		<if test="userId!=null and userId!='' ">  
+		      AND sys_message.user_id=#{userId,jdbcType=VARCHAR}
+		</if>
+        <if test="readFlag!=null">  
+		      AND sys_message.read_flag=#{userId,jdbcType=BIT}
+		</if>
+		<if test="type!=null">  
+		      AND sys_message.type=#{type,jdbcType=TINYINT}
+		</if>
+        ORDER BY sys_message.send_time DESC
+    </select>
+    
+    <!--分页查询-->
+    <select id="queryListByPage"  parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT sys_message.id,sys_message.user_id,sys_message.title,sys_message.content,sys_message.type,sys_message.send_time,
+		sys_message.read_flag,sys_message.read_time,sys_user.`name` userName FROM sys_message
+		INNER JOIN sys_user ON sys_user.id=sys_message.user_id  AND sys_user.is_delete=0
+		WHERE 1=1
+		<if test="data.userId!=null and data.userId!='' ">  
+		      AND sys_message.user_id=#{data.userId,jdbcType=VARCHAR}
+		</if>
+        <if test="data.readFlag!=null">  
+		      AND sys_message.read_flag=#{data.readFlag,jdbcType=BIT}
+		</if>
+		<if test="data.type!=null">  
+		      AND sys_message.type=#{data.type,jdbcType=TINYINT}
+		</if>
+        ORDER BY sys_message.send_time DESC
+    </select>
+</mapper>

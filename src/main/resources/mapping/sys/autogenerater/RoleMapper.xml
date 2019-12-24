@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.RoleMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.Role">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="role_group_id"  jdbcType="VARCHAR"  property="roleGroupId" />
+    <result column="role_name"  jdbcType="VARCHAR"  property="roleName" />
+    <result column="role_type"  jdbcType="TINYINT"  property="roleType" />
+    <result column="remark"  jdbcType="VARCHAR"  property="remark" />
+  </resultMap>
+ 
+  <sql id="columnList">
+     id,role_group_id,role_name,role_type,remark
+  </sql>
+  
+  <!--删除 -->
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+       update sys_role set sys_role.is_delete=1,sys_role.modify_user=#{modifyUser,jdbcType=VARCHAR},
+       sys_role.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+       WHERE sys_role.id IN
+       <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+		  #{item}
+       </foreach>
+   </delete>
+   
+  <!--新增 -->
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.Role">
+    insert into sys_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">
+        id,
+      </if>
+      <if test="roleGroupId!=null">
+        role_group_id,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="roleType!=null">
+        role_type,
+      </if>
+      <if test="remark!=null">
+        remark,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createDate!= null">
+        create_date,
+      </if>
+      <if test="modifyUser!= null">
+        modify_user,
+      </if>
+      <if test="modifyDate!= null">
+        modify_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="roleGroupId != null">
+        #{roleGroupId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleType!= null">
+        #{roleType,jdbcType=TINYINT},
+      </if>
+      <if test="remark!=null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate!= null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate!= null">
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.Role">
+    update sys_role
+    <set>
+      <if test="id != null">
+        id=#{id,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName!= null">
+        role_name=#{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleType!= null">
+        role_type=#{roleType,jdbcType=TINYINT},
+      </if>
+      <if test="remark!= null">
+        remark=#{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        modify_user=#{modifyUser,jdbcType=BIGINT},
+      </if>
+      <if test="modifyDate!= null">
+        modify_date= #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where sys_role.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="queryById"  parameterType="String" resultMap="resultMap" >
+      select  <include refid="columnList"/> from sys_role where sys_role.id=#{id,jdbcType=VARCHAR}
+  </select>
+    
+  <!--根据条件查询-->
+  <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.Role"  resultMap="resultMap" >
+       SELECT sys_role.id,sys_role.role_group_id,sys_role.role_name,sys_role.role_type,sys_role.remark FROM sys_role
+       WHERE sys_role.is_delete=0
+	  <if test="roleGroupId!=null and roleGroupId!='' ">
+	      AND sys_role.role_group_id=#{roleGroupId,jdbcType=VARCHAR}
+	  </if>
+      <if test="roleType!=null and roleType>0">
+	      AND sys_role.role_type=#{roleType,jdbcType=TINYINT},
+	  </if>
+	  <if test="roleName!=null and roleName!='' ">
+	      AND sys_role.role_name LIKE CONCAT('%',#{roleName,jdbcType=VARCHAR},'%')
+	  </if>
+       ORDER BY sys_role.role_name ASC
+  </select>
+    
+    <!--分页查询-->
+    <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT sys_role.id,sys_role.role_group_id,sys_role.role_name,sys_role.role_type,sys_role.remark FROM sys_role
+        WHERE sys_role.is_delete=0
+	    <if test="data.roleGroupId!=null and data.roleGroupId!='' ">  
+	      AND sys_role.role_group_id=#{data.roleGroupId,jdbcType=VARCHAR}
+	    </if>
+        <if test="data.roleType!=null and data.roleType>0">
+	      AND sys_role.role_type=#{data.roleType,jdbcType=TINYINT},
+	    </if>
+	    <if test="data.roleName!=null and data.roleName!='' ">
+	      AND sys_role.role_name LIKE CONCAT('%',#{roleName,jdbcType=VARCHAR},'%')
+	    </if>
+        ORDER BY sys_role.role_name ASC
+    </select>
+    
+    <!--根据用户ID查询用户所属角色集合-->
+    <select id="queryRoleListByUserId"  resultMap="resultMap">
+        SELECT sys_role.id,sys_role.role_group_id,sys_role.role_name,sys_role.role_type,sys_role.remark FROM sys_role
+		INNER JOIN sys_user_role ON sys_user_role.role_id=sys_role.id
+		WHERE sys_role.is_delete=0
+		AND sys_role.role_type=#{roleType,jdbcType=TINYINT}
+		AND sys_user_role.user_id=#{userId,jdbcType=VARCHAR}
+    </select>
+    
+    <!--根据权限ID查询拥有该权限的角色集合-->
+    <select id="queryRoleListByPermissionId"  resultMap="resultMap">
+        SELECT sys_role.id,sys_role.role_group_id,sys_role.role_name,sys_role.role_type,sys_role.remark FROM sys_role
+		INNER JOIN sys_role_permission ON sys_role_permission.role_id=sys_role.id
+		WHERE sys_role.is_delete=0
+		AND sys_role.role_type=1
+		AND sys_role_permission.permission_id=#{permissionId,jdbcType=VARCHAR}
+    </select>
+
+  <!--根据角色ID查询用户ID集合-->
+  <select id="queryUserIdListByRoleId"  parameterType="java.lang.String"  resultType="java.lang.String" >
+        SELECT DISTINCT sys_user_role.user_id FROM sys_user_role
+		WHERE sys_user_role.role_id=#{roleId,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

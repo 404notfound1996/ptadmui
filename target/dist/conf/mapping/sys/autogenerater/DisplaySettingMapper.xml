@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.DisplaySettingMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.DisplaySetting">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="navigation_color" jdbcType="VARCHAR" property="navigationColor" />
+    <result column="across_flag" jdbcType="VARCHAR" property="acrossFlag" />
+    <result column="menu_theme" jdbcType="VARCHAR" property="menuTheme" />
+    <result column="menu_display" jdbcType="VARCHAR" property="menuDisplay" />
+    <result column="menu_txt_icon" jdbcType="VARCHAR" property="menuTxtIcon" />
+    <result column="theme_color" jdbcType="VARCHAR" property="themeColor" />
+    <result column="global_flag" jdbcType="BIT" property="globalFlag" />
+    <result column="default_flag" jdbcType="BIT" property="defaultFlag" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
+  </resultMap>
+  <!--新增 -->
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.DisplaySetting">
+    insert into sys_display_setting
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="navigationColor != null">
+        navigation_color,
+      </if>
+      <if test="acrossFlag != null">
+        across_flag,
+      </if>
+      <if test="menuTheme != null">
+        menu_theme,
+      </if>
+      <if test="menuDisplay != null">
+        menu_display,
+      </if>
+      <if test="menuTxtIcon != null">
+        menu_txt_icon,
+      </if>
+      <if test="themeColor != null">
+        theme_color,
+      </if>
+      <if test="globalFlag != null">
+        global_flag,
+      </if>
+      <if test="defaultFlag != null">
+        default_flag,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="modifyDate != null">
+        modify_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="navigationColor != null">
+        #{navigationColor,jdbcType=VARCHAR},
+      </if>
+      <if test="acrossFlag != null">
+        #{acrossFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="menuTheme != null">
+        #{menuTheme,jdbcType=VARCHAR},
+      </if>
+      <if test="menuDisplay != null">
+        #{menuDisplay,jdbcType=VARCHAR},
+      </if>
+      <if test="menuTxtIcon != null">
+        #{menuTxtIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="themeColor != null">
+        #{themeColor,jdbcType=VARCHAR},
+      </if>
+      <if test="globalFlag != null">
+        #{globalFlag,jdbcType=BIT},
+      </if>
+      <if test="defaultFlag != null">
+        #{defaultFlag,jdbcType=BIT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!--修改 -->
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.DisplaySetting">
+     update sys_display_setting set
+     navigation_color = #{navigationColor,jdbcType=VARCHAR},
+     across_flag = #{acrossFlag,jdbcType=VARCHAR},
+     menu_theme = #{menuTheme,jdbcType=VARCHAR},
+     menu_display = #{menuDisplay,jdbcType=VARCHAR},
+     menu_txt_icon = #{menuTxtIcon,jdbcType=VARCHAR},
+     theme_color = #{themeColor,jdbcType=VARCHAR},
+     modify_date = #{modifyDate,jdbcType=TIMESTAMP}
+     where sys_display_setting.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!--删除 -->
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+        delete from sys_display_setting WHERE sys_display_setting.user_id=#{userId,jdbcType=VARCHAR}
+  </delete>
+  
+  <!--根据条件查询-->
+  <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.DisplaySetting"  resultMap="resultMap" >
+        SELECT sys_display_setting.id,sys_display_setting.navigation_color,sys_display_setting.across_flag,sys_display_setting.menu_theme,
+		sys_display_setting.menu_display,sys_display_setting.menu_txt_icon,sys_display_setting.theme_color,
+		sys_display_setting.global_flag,sys_display_setting.default_flag,sys_display_setting.user_id,sys_display_setting.modify_date
+		FROM sys_display_setting
+		WHERE 1=1
+		<if test="id!=null and id!='' ">  
+		      AND sys_display_setting.id=#{id,jdbcType=VARCHAR}
+		</if>
+		<if test="userId!=null and userId!='' ">  
+		      AND sys_display_setting.user_id=#{userId,jdbcType=VARCHAR}
+		</if>
+   </select>
+   <!-- 查询默认 -->
+	<select id="queryDefault"  resultMap="resultMap" >
+		SELECT sys_display_setting.id,sys_display_setting.navigation_color,sys_display_setting.across_flag,sys_display_setting.menu_theme,
+		sys_display_setting.menu_display,sys_display_setting.menu_txt_icon,sys_display_setting.theme_color,
+		sys_display_setting.global_flag,sys_display_setting.default_flag,sys_display_setting.user_id,sys_display_setting.modify_date
+		FROM sys_display_setting where sys_display_setting.default_flag = 1
+	</select>
+	
+	<!-- 查询全局 -->
+	<select id="queryGlobal"  resultMap="resultMap" >
+		SELECT sys_display_setting.id,sys_display_setting.navigation_color,sys_display_setting.across_flag,sys_display_setting.menu_theme,
+		sys_display_setting.menu_display,sys_display_setting.menu_txt_icon,sys_display_setting.theme_color,
+		sys_display_setting.global_flag,sys_display_setting.default_flag,sys_display_setting.user_id,sys_display_setting.modify_date
+		FROM sys_display_setting where sys_display_setting.global_flag = 1
+	</select>
+</mapper>

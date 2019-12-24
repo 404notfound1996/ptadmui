@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.MenuMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.Menu">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="layer" jdbcType="VARCHAR" property="layer" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+  </resultMap>
+ 
+  <sql id="columnList">
+    id, name, parent_id, layer, icon, url
+  </sql>
+  
+  <!--删除 -->
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+       DELETE from sys_menu where sys_menu.id IN(
+           select t.id from(
+				select sys_menu.id from sys_menu where sys_menu.layer LIKE
+				(select CONCAT(sys_menu.layer,'%') from sys_menu where sys_menu.id =#{menuId,jdbcType=VARCHAR})
+	 	   ) t
+	   )
+  </delete>
+  
+  <!--新增 -->
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.Menu">
+    insert into sys_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="layer != null">
+        layer,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="modifyDate != null">
+        modify_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="layer != null">
+        #{layer,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!--更新-->
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.Menu">
+    update sys_menu
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="layer != null">
+        layer = #{layer,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where sys_menu.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="queryById"  parameterType="String"  resultType="com.goshine.ptadmui.sys.entity.Menu" >
+      select <include refid="columnList"/> from sys_menu where sys_menu.id=#{id,jdbcType=VARCHAR}
+  </select>
+  
+  <!--根据条件查询-->
+  <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.Menu"  resultMap="resultMap" >
+      SELECT sys_menu.id,sys_menu.`name`,sys_menu.parent_id,sys_menu.layer,sys_menu.icon,sys_menu.url FROM sys_menu
+      WHERE  sys_menu.id NOT IN('11134','81','11127','11130','11144') 
+	  <if test="parentId!=null and parentId!='' ">  
+	      AND sys_menu.parent_id=#{parentId,jdbcType=VARCHAR}
+	  </if>
+      <if test="layer!=null and layer!='' ">  
+	      AND sys_menu.layer LIKE CONCAT(#{layer,jdbcType=VARCHAR},'%')
+	  </if>
+	  <if test="url!=null and url!='' ">  
+	      AND sys_menu.url LIKE CONCAT(#{url,jdbcType=VARCHAR},'%')
+	  </if>
+	  <if test="name!=null and name!='' ">  
+	      AND sys_menu.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+	  </if>
+       ORDER BY sys_menu.layer ASC
+  </select>
+  
+  <!--查询某用户所拥有的功能权限-->
+  <select id="queryMenuListByAuth"   resultMap="resultMap" >
+        SELECT sys_menu.id,sys_menu.`name`,sys_menu.parent_id,sys_menu.layer,sys_menu.icon,sys_menu.url FROM sys_menu
+		WHERE sys_menu.id NOT IN('11134','81','11127','11130','11144')
+		AND EXISTS(
+		   SELECT 1 from sys_user_role 
+		   INNER JOIN sys_role_permission ON sys_role_permission.role_id=sys_user_role.role_id 
+		   INNER JOIN sys_permission_menu ON sys_permission_menu.permission_id=sys_role_permission.permission_id
+		   WHERE sys_permission_menu.menu_id=sys_menu.id 
+		   AND sys_user_role.user_id=#{userId,jdbcType=VARCHAR}
+		)
+		
+		<if test="parentId!=null and parentId!='' ">  
+		    AND sys_menu.parent_id=#{parentId,jdbcType=VARCHAR}
+		</if>
+		ORDER BY sys_menu.layer ASC;
+  </select>
+  
+	<!-- 生成顶部菜单的layer -->
+	<select id="generateFirstLayer" resultType="java.lang.String">
+		select (max(SUBSTR(sys_menu.layer,1,2))+1) str from sys_menu where  sys_menu.id NOT IN('11134','81','11127','11130','11144') 
+	</select>
+	<!-- 生成顶部菜单的layer -->
+	<select id="generateOtherLayer"  parameterType="java.lang.String"  resultType="java.lang.String">
+		select (max(sys_menu.layer)+1) str from sys_menu WHERE  sys_menu.parent_id={parentId,jdbcType=VARCHAR}
+		AND sys_menu.id NOT IN('11134','81','11127','11130','11144') 
+	</select>
+	
+    <!--根据父类ID左关联查询权限菜单列表-->
+    <select id="queryPermissionMenuListByParentId"  resultMap="resultMap" >
+        SELECT sys_menu.id,sys_menu.`name`,sys_menu.icon,sys_menu.parent_id,sys_menu.layer,sys_permission_menu.permission_id FROM sys_menu
+		LEFT JOIN sys_permission_menu ON sys_permission_menu.menu_id=sys_menu.id AND sys_permission_menu.permission_id=#{permissionId,jdbcType=VARCHAR}
+		WHERE  sys_menu.parent_id=#{parentId,jdbcType=VARCHAR}
+		AND sys_menu.id NOT IN('11134','81','11127','11130','11144')
+		ORDER BY sys_menu.layer ASC
+    </select>
+    
+    <!-- 更新顶部菜单及其子菜单的layer -->
+	<update id="updateTopOrder" parameterType="com.goshine.ptadmui.sys.entity.Menu">
+		update sys_menu set layer = concat(#{orderNo}, substr(layer,3,length(layer))) where sys_menu.id in
+		<foreach collection="ids" item="menuId" index="index" open="(" close=")" separator=",">
+            #{menuId}
+        </foreach>
+	</update>
+	
+    <!-- 根据顶部菜单查询它及其子菜单id集合 -->
+	<select id="queryTopChildrenIds" parameterType="com.goshine.ptadmui.sys.entity.Menu" resultType="java.lang.String">
+		select id from sys_menu where sys_menu.layer LIKE CONCAT(#{originalOrderNo,jdbcType=VARCHAR},'%')
+		AND sys_menu.id NOT IN('11134','81','11127','11130','11144') 
+	</select>
+</mapper>

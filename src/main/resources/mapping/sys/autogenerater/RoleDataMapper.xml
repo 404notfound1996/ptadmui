@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.RoleDataMapper">
+  <resultMap id="resultMap"  type="com.goshine.ptadmui.sys.entity.RoleData">
+    <result column="id"  jdbcType="VARCHAR"  property="id" />
+    <result column="role_id"  jdbcType="VARCHAR"  property="roleId" />
+    <result column="data_id"  jdbcType="VARCHAR"  property="dataId" />
+    <result column="data_type"  jdbcType="VARCHAR"  property="data_type" />
+  </resultMap>
+  
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+    delete from sys_role_data where 1=1
+    <if test="dataId!= null  and dataId!=''">
+          and sys_role_data.data_id=#{dataId,jdbcType=VARCHAR}
+    </if>
+    <if test="roleId!= null  and roleId!=''">
+          and sys_role_data.role_id=#{roleId,jdbcType=VARCHAR}
+    </if>
+  </delete>
+  
+  <delete id="batchDeleteByParams"  parameterType="java.util.Map">
+    delete from sys_role_data where 1=1
+    <if test="dataIds!= null">
+          and sys_role_data.data_id IN
+          <foreach item="item" index="index" collection="dataIds" open="(" separator="," close=")">
+		  	#{item}
+          </foreach>
+    </if>
+    <if test="roleIds!= null">
+          and sys_role_data.role_id IN
+          <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+		  	#{item}
+          </foreach>
+    </if>
+  </delete>
+  
+  <!--批量新增 -->
+  <insert id="batchInsert">
+	   insert into sys_role_data(id,data_id,role_id,data_type) values 
+	   <foreach collection="list"  item="item" separator=",">
+	     (#{item.id,jdbcType=VARCHAR},#{item.dataId,jdbcType=VARCHAR}, #{item.roleId,jdbcType=VARCHAR}, #{item.dataType,jdbcType=VARCHAR})
+	   </foreach>
+	</insert>
+	
+	<!--根据条件查询-->
+     <select id="queryDataIdListByRoleId"  parameterType="java.lang.String"  resultType="java.lang.String" >
+        SELECT DISTINCT sys_role_data.data_id FROM sys_role_data
+		WHERE sys_role_data.role_id=#{roleId,jdbcType=VARCHAR}
+    </select>
+</mapper>

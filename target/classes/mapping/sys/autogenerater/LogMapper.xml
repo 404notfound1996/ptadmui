@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.LogMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.Log">
+    <result column="id"  jdbcType="VARCHAR"  property="id" />
+    <result column="url"  jdbcType="VARCHAR"  property="url" />
+    <result column="type"  jdbcType="VARCHAR"  property="type" />
+    <result column="params"  jdbcType="VARCHAR"  property="params" />
+    <result column="create_user"  jdbcType="BIGINT"  property="createUser" />
+    <result column="create_date"  jdbcType="TIMESTAMP"  property="createDate" />
+    <result column="operate_ip"  jdbcType="VARCHAR"  property="operateIp" />
+    <result column="createUserName"  jdbcType="VARCHAR"  property="createUserName" />
+  </resultMap>
+  
+  <sql id="columnList">
+    id,url,type,params,create_user,create_date,operate_ip
+  </sql>
+  
+  <!--INSERT-->
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.Log">
+    insert into sys_log (id, url, type,params, create_user, create_date,operate_ip)
+    values (#{id,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{params,jdbcType=VARCHAR},
+    #{createUser,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},#{operateIp,jdbcType=VARCHAR})
+  </insert>
+  
+  <!--UPDATE-->
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.Log">
+    update sys_log
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="params != null">
+        params = #{params,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateIp != null">
+        operate_ip = #{operateIp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where sys_log.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!--DELETE-->
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+        delete from sys_log
+        WHERE sys_log.id IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			 #{item}
+	    </foreach>
+   </delete>
+   
+   <!--分页查询-->
+   <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT sys_log.id,sys_log.url,sys_log.type,sys_log.params,sys_log.create_user,sys_log.create_date,sys_log.operate_ip,sys_user.`name` createUserName FROM sys_log
+		LEFT JOIN sys_user ON sys_user.id=sys_log.create_user AND sys_user.is_delete=0
+		WHERE 1=1
+		<if test="data.type!=null  and data.type!=''">
+		      AND sys_log.type LIKE CONCAT(#{data.type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="data.userId!=null  and data.userId!=''">
+		      AND sys_log.create_user=#{data.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="data.startDate!=null  and data.startDate!=''">
+		      AND sys_log.create_date>=STR_TO_DATE(CONCAT(#{data.startDate,jdbcType=VARCHAR},' 00:00:00'),'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="data.endDate!=null  and data.endDate!=''">
+		      <![CDATA[
+		      AND sys_log.create_date<=STR_TO_DATE(CONCAT(#{data.endDate,jdbcType=VARCHAR},' 23:59:59'),'%Y-%m-%d %H:%i:%s') 
+		      ]]>
+		</if>
+        ORDER BY sys_log.create_date DESC
+    </select>
+    
+    <!--查询某用户的日志总数-->
+    <select id="queryCountByUserId"  parameterType="java.lang.String"  resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT sys_log.id) CNT FROM sys_log WHERE sys_log.create_user=#{userId,jdbcType=VARCHAR}
+    </select>
+    
+    <!--查询所有日志类型-->
+    <select id="queryLogTypeList"  resultType="java.lang.String">
+        SELECT DISTINCT sys_log.type FROM sys_log
+    </select>
+    
+    <!--查询所有用户列表-->
+    <select id="queryUserList"   resultType="com.goshine.ptadmui.core.model.KeyValue">
+        SELECT DISTINCT sys_log.create_user id,sys_user.`name` text FROM sys_log
+        INNER JOIN sys_user ON sys_user.id=sys_log.create_user AND sys_user.is_delete=0
+    </select>
+</mapper>

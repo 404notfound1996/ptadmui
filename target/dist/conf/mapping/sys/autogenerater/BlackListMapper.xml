@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.BlackListMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.BlackList">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+  
+  <!--INSERT-->
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.BlackList">
+    insert into sys_blacklist
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!= null">
+        id,
+      </if>
+      <if test="ip != null">
+        ip,
+      </if>
+      <if test="remark!= null">
+        remark,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate!= null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!--UPDATE -->
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.BlackList">
+    update sys_blacklist
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="remark!= null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where sys_blacklist.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!--删除 -->
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+       delete from sys_blacklist WHERE sys_blacklist.id IN
+       <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+		 #{item}
+     </foreach>
+  </delete>
+  
+  <select id="queryById" parameterType="String" resultType="com.goshine.ptadmui.sys.entity.BlackList" >
+      SELECT sys_blacklist.id,sys_blacklist.ip,sys_blacklist.remark,sys_blacklist.create_user,sys_blacklist.create_date,sys_user.`name` createUserName FROM sys_blacklist
+      LEFT JOIN sys_user ON sys_user.id=sys_blacklist.id AND sys_user.is_delete=0 
+      where sys_blacklist.id=#{id,jdbcType=VARCHAR}
+  </select>
+    
+    <!--根据条件查询-->
+    <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.BlackList"  resultMap="resultMap" >
+        SELECT sys_blacklist.id,sys_blacklist.ip,sys_blacklist.remark,sys_blacklist.create_user,sys_blacklist.create_date,sys_user.`name` createUserName FROM sys_blacklist
+        LEFT JOIN sys_user ON sys_user.id=sys_blacklist.id AND sys_user.is_delete=0
+        where 1=1
+      <if test="id != null">
+       and sys_blacklist.id = #{id,jdbcType=VARCHAR}
+      </if>
+      <if test="ip != null">
+        and sys_blacklist.ip = #{ip,jdbcType=VARCHAR}
+      </if>
+      <if test="remark!= null">
+        and sys_blacklist.remark LIKE CONCAT('%', #{remark,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="createUser != null">
+        and sys_blacklist.create_user = #{createUser,jdbcType=VARCHAR}
+      </if>
+      <if test="createDate != null">
+        and sys_blacklist.create_date = #{createDate,jdbcType=TIMESTAMP}
+      </if>
+
+		ORDER BY sys_blacklist.id DESC
+    </select>
+    
+    <!--分页查询-->
+    <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT sys_blacklist.id,sys_blacklist.ip,sys_blacklist.remark,sys_blacklist.create_user,sys_blacklist.create_date,sys_user.`name` createUserName FROM sys_blacklist
+        LEFT JOIN sys_user ON sys_user.id=sys_blacklist.id AND sys_user.is_delete=0
+        ORDER BY sys_blacklist.id DESC
+    </select>
+</mapper>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mapping.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goshine.ptadmui.sys.mapper.OrganizationMapper" >
+	<resultMap id="resultMap"  type="com.goshine.ptadmui.sys.entity.Organization">
+		<id property="id" column="id"  jdbcType="VARCHAR"/>
+		<result property="parentId" column="parent_id"  jdbcType="VARCHAR"/>
+		<result property="orgCode" column="org_code"  jdbcType="VARCHAR"/>
+		<result property="orgName" column="org_name"  jdbcType="VARCHAR" />
+		<result property="remark" column="remark"  jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="columnList">
+	    <![CDATA[
+	         id,parent_id,org_code,org_name,remark,create_user,create_date,modify_user,modify_date
+         ]]>
+     </sql>
+	
+     <!--新增-->
+	 <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.Organization">
+        INSERT INTO sys_organization
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+             sys_organization.id,sys_organization.is_delete
+           <if test="parentId!= null">,sys_organization.parent_id</if>
+		   <if test="orgCode!= null">,sys_organization.org_code</if>
+		   <if test="orgName != null">,sys_organization.org_name</if>
+		   <if test="remark!= null">,sys_organization.remark</if>
+		   <if test="createUser!= null">,sys_organization.create_user</if>
+		   <if test="createDate!= null">,sys_organization.create_date</if>
+		   <if test="modifyUser!= null">,sys_organization.modify_user</if>
+		   <if test="modifyDate!= null">,sys_organization.modify_date</if>
+       </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+           #{id,jdbcType=VARCHAR},0
+           <if test="parentId!= null">,#{parentId,jdbcType=VARCHAR}</if>
+		   <if test="orgCode != null">,#{orgCode,jdbcType=VARCHAR}</if>
+		   <if test="orgName!= null">,#{orgName,jdbcType=VARCHAR}</if>
+		   <if test="remark!= null">,#{remark,jdbcType=VARCHAR}</if>
+		   <if test="createUser!= null">,#{createUser,jdbcType=VARCHAR}</if>
+		   <if test="createDate!= null">,#{createDate,jdbcType=TIMESTAMP}</if>
+		   <if test="modifyUser!= null">,#{modifyUser,jdbcType=VARCHAR}</if>
+		   <if test="modifyDate!= null">,#{modifyDate,jdbcType=TIMESTAMP}</if>
+	   </trim>             
+    </insert>
+    
+    <!--更新 -->
+	 <update id="update"  parameterType="com.goshine.ptadmui.sys.entity.Organization">
+        UPDATE sys_organization
+		<set>
+			<trim suffix="" suffixOverrides=",">
+			    <if test="orgCode!= null">
+                    sys_organization.org_code=#{orgCode,jdbcType=VARCHAR},
+				</if>
+				<if test="orgName!= null">
+		            sys_organization.org_name=#{orgName,jdbcType=VARCHAR},
+		        </if>
+				<if test="remark!= null">
+		             sys_organization.remark=#{remark,jdbcType=VARCHAR},
+		        </if>
+				<if test="modifyUser!= null">
+		             sys_organization.modify_user=#{modifyUser,jdbcType=VARCHAR},
+		        </if>
+				<if test="modifyDate!=null">
+		             sys_organization.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+		         </if>
+            </trim>
+		</set>
+		where sys_organization.id=#{id,jdbcType=VARCHAR}
+	</update>
+	
+	<!--删除 -->
+	<delete id="deleteByParams"  parameterType="java.util.Map">
+        update sys_organization set sys_organization.is_delete=1,sys_organization.modify_user=#{modifyUser,jdbcType=VARCHAR},
+        sys_organization.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+        WHERE sys_organization.id IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			 #{item}
+	     </foreach>
+    </delete>
+	 
+	<!--分页查询-->
+    <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        select sys_organization.id,sys_organization.parent_id,sys_organization.org_code,sys_organization.org_name,sys_organization.remark,
+		sys_user.`name` modifyUserName,sys_organization.modify_date 
+		from sys_organization 
+		LEFT JOIN sys_user ON sys_user.id=sys_organization.modify_user AND sys_user.is_delete=0
+		where sys_organization.is_delete=0
+		<if test="data.parentId!=null and data.parentId!='' ">  
+		      AND sys_organization.parent_id=#{data.parentId,jdbcType=VARCHAR}
+		</if>
+        <if test="data.orgCode!=null and data.orgCode!='' ">  
+		      AND sys_organization.org_code LIKE CONCAT(#{data.orgCode,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="data.orgName!=null and data.orgName!='' ">  
+		      AND sys_organization.org_name LIKE CONCAT('%',#{data.orgName,jdbcType=VARCHAR},'%')
+		</if>
+        ORDER BY sys_organization.org_code ASC
+    </select>
+    
+    <!--根据条件查询-->
+    <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.Organization"  resultMap="resultMap" >
+        select sys_organization.id,sys_organization.parent_id,sys_organization.org_code,sys_organization.org_name,sys_organization.remark,
+		sys_user.name modifyUserName,sys_organization.modify_date 
+		from sys_organization 
+		LEFT JOIN sys_user ON sys_user.id=sys_organization.modify_user AND sys_user.is_delete=0
+		where sys_organization.is_delete=0
+		<if test="parentId!=null and parentId!='' ">  
+		      AND sys_organization.parent_id=#{parentId,jdbcType=VARCHAR}
+		</if>
+        <if test="orgCode!=null and orgCode!='' ">  
+		      AND sys_organization.org_code LIKE CONCAT(#{orgCode,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="orgName!=null and orgName!='' ">  
+		      AND sys_organization.org_name LIKE CONCAT('%',#{orgName,jdbcType=VARCHAR},'%')
+		</if>
+        ORDER BY sys_organization.org_code ASC
+    </select>
+    
+    <select id="queryById" parameterType="String" resultType="com.goshine.ptadmui.sys.entity.Organization" >
+        select <include refid="columnList"/> from sys_organization where id=#{id,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="checkOrganizationInfo"  parameterType="com.goshine.ptadmui.sys.entity.Organization"  resultType="com.goshine.ptadmui.sys.entity.Organization" >
+        select <include refid="columnList"/> from sys_organization where sys_organization.is_delete=0
+        <if test="id!=null and id!='' ">  
+            AND sys_organization.id!=#{id,jdbcType=VARCHAR}
+        </if>
+        <if test="orgCode!=null and orgCode!='' ">  
+            AND sys_organization.org_code=#{orgCode,jdbcType=VARCHAR} 
+        </if>
+        <if test="orgName!=null and orgName!='' ">  
+            AND sys_organization.org_name=#{orgName,jdbcType=VARCHAR} 
+        </if>
+    </select>
+    
+    <select id="getParentIdListByOrgId" parameterType="java.lang.String"  resultType="java.lang.String">
+        SELECT getParentIdList(#{orgId,jdbcType=VARCHAR}) FROM DUAL;
+    </select>
+    
+    <select id="getChildIdListByOrgId" parameterType="java.lang.String"  resultType="java.lang.String">
+        SELECT getChildIdList(#{orgId,jdbcType=VARCHAR}) FROM DUAL;
+    </select>
+    
+    <!--查询某用户的机构数据权限集合 -->
+    <select id="getAuthOrgListByContext"  resultType="java.lang.String">
+        SELECT view_user_org_auth.org_id FROM view_user_org_auth
+		WHERE view_user_org_auth.user_id=#{context.userId,jdbcType=VARCHAR}
+    </select>
+</mapper>

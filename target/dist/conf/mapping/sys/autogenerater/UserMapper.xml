@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.UserMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.vo.UserVo">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="login_count" jdbcType="BIGINT" property="loginCount" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="last_login_ip" jdbcType="VARCHAR" property="lastLoginIp" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="job_num" jdbcType="VARCHAR" property="jobNum" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="sex" jdbcType="BIT" property="sex" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="phone_ext" jdbcType="VARCHAR" property="phoneExt" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="executive_mode" jdbcType="BIT" property="executiveMode" />
+    <result column="user_type" jdbcType="TINYINT" property="userType" />
+  </resultMap>
+
+  <sql id="columnList">
+    id,user_name,password,login_count,status,last_login_time,last_login_ip, name, job_num, position, 
+    email, mobile, sex, telephone, phone_ext,remark,executive_mode,user_type
+  </sql>
+  <!--新增 -->
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.User">
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="loginCount != null">
+        login_count,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time,
+      </if>
+      <if test="lastLoginIp != null">
+        last_login_ip,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="modifyDate != null">
+        modify_date,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="jobNum != null">
+        job_num,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="phoneExt != null">
+        phone_ext,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="executiveMode != null">
+        executive_mode,
+      </if>
+      <if test="userType != null">
+        user_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="loginCount != null">
+        #{loginCount,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="lastLoginTime != null">
+        #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginIp != null">
+        #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="jobNum != null">
+        #{jobNum,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=BIT},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneExt != null">
+        #{phoneExt,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="executiveMode!= null">
+        #{executiveMode,jdbcType=BIT},
+      </if>
+      <if test="userType != null">
+        #{userType,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update"  parameterType="com.goshine.ptadmui.sys.entity.User">
+    update sys_user
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="loginCount != null">
+        login_count = #{loginCount,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginIp != null">
+        last_login_ip = #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="jobNum != null">
+        job_num = #{jobNum,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=BIT},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneExt != null">
+        phone_ext = #{phoneExt,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="executiveMode != null">
+        executive_mode = #{executiveMode,jdbcType=BIT},
+      </if>
+      <if test="userType != null">
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where sys_user.id=#{id,jdbcType=VARCHAR}
+   </update>
+  
+   <!--删除 -->
+   <delete id="deleteByParams" parameterType="java.util.Map">
+        update sys_user set sys_user.is_delete=1,sys_user.modify_user=#{modifyUser,jdbcType=BIGINT},
+        sys_user.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+        WHERE sys_user.id IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			 #{item}
+	     </foreach>
+
+   </delete>
+   
+   <!--批量启停-->
+   <delete id="startOrStopByParams" parameterType="java.util.Map">
+        update sys_user set sys_user.`status`=#{status,jdbcType=TINYINT},sys_user.modify_user=#{modifyUser,jdbcType=VARCHAR},
+        sys_user.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+        WHERE sys_user.id IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			 #{item}
+	     </foreach>
+   </delete>
+
+   <select id="queryById"  parameterType="java.lang.String"  resultMap="resultMap">
+		select sys_user.id,sys_user.user_name,sys_user.`password`,sys_user.login_count,sys_user.`status`,sys_user.last_login_time,sys_user.last_login_ip,
+		sys_user.`name`,sys_user.job_num,sys_user.position,sys_user.email,sys_user.mobile,sys_user.sex,sys_user.telephone,sys_user.phone_ext,
+		sys_user.remark,sys_user.executive_mode,sys_user.user_type
+		from sys_user WHERE sys_user.is_delete=0 
+		AND sys_user.id=#{id,jdbcType=VARCHAR}
+  </select>
+  
+  <!--根据条件查询-->
+  <select id="queryUserIdListByOrgId"  parameterType="java.lang.String"  resultType="java.lang.String" >
+        select sys_user.id from sys_user 
+        where sys_user.is_delete=0
+        AND EXISTS(
+		    SELECT 1 FROM sys_org_user WHERE sys_org_user.user_id=sys_user.id AND sys_org_user.org_id=#{orgId,jdbcType=VARCHAR}
+	    )
+   </select>
+   
+   <!--根据条件查询-->
+  <select id="queryUserIdListByRoleId"  parameterType="java.lang.String"  resultType="java.lang.String" >
+        select sys_user.id from sys_user 
+        where sys_user.is_delete=0
+        AND EXISTS(
+		    SELECT 1 FROM sys_user_role WHERE sys_user_role.user_id=sys_user.id AND sys_user_role.role_id=#{roleId,jdbcType=VARCHAR}
+	    )
+   </select>
+  
+  <!--根据条件查询-->
+  <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.vo.UserVo"  resultMap="resultMap" >
+        select sys_user.id,sys_user.user_name,sys_user.login_count,sys_user.`status`,sys_user.last_login_time,sys_user.last_login_ip,
+		sys_user.`name`,sys_user.job_num,sys_user.position,sys_user.email,sys_user.mobile,sys_user.sex,sys_user.telephone,sys_user.phone_ext,
+		sys_user.remark,sys_user.executive_mode,sys_user.user_type
+		from sys_user where sys_user.is_delete=0
+		<if test="orgIds!=null">  
+		      AND EXISTS(
+				    SELECT 1 FROM sys_org_user WHERE sys_org_user.user_id=sys_user.id
+				    AND sys_org_user.org_id IN
+				    <foreach item="item" index="index" collection="orgIds" open="(" separator="," close=")">
+						#{item}
+				    </foreach>
+			  )
+		</if>
+        <if test="jobNum!=null and jobNum!='' ">  
+		      AND sys_user.job_num LIKE CONCAT(#{jobNum,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="name!=null and name!='' ">
+		      AND sys_user.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="status!=null">
+		      AND sys_user.status=#{status,jdbcType=TINYINT},
+		</if>
+		<if test="mobile!=null  and mobile!=''">
+		      AND sys_user.mobile=#{mobile,jdbcType=VARCHAR},
+		</if>
+		<if test="email!=null  and email!=''">
+		      AND sys_user.email=#{email,jdbcType=VARCHAR},
+		</if>
+        ORDER BY sys_user.job_num ASC
+   </select>
+   <!--分页查询用户信息 -->
+   <select id="queryListByPage"  parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap">
+		select sys_user.id,sys_user.user_name,sys_user.login_count,sys_user.`status`,sys_user.last_login_time,sys_user.last_login_ip,
+		sys_user.`name`,sys_user.job_num,sys_user.position,sys_user.email,sys_user.mobile,sys_user.sex,sys_user.telephone,sys_user.phone_ext,
+		sys_user.remark,sys_user.executive_mode,sys_user.user_type
+		from sys_user WHERE sys_user.is_delete=0
+		<if test="data.orgId!=null and data.orgId!='' ">
+            AND EXISTS(
+            SELECT 1 FROM sys_org_user WHERE sys_org_user.user_id=sys_user.id
+            AND sys_org_user.org_id IN
+            (#{data.orgId,jdbcType=VARCHAR})
+            )
+		</if>
+        <if test="data.jobNum!=null and data.jobNum!='' ">  
+		      AND sys_user.job_num LIKE CONCAT(#{data.jobNum,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="data.name!=null and data.name!='' ">
+		      AND sys_user.name LIKE CONCAT('%',#{data.name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="data.status!=null  and data.status!=''">
+		      AND sys_user.status=#{data.status,jdbcType=TINYINT}
+		</if>
+		<if test="data.mobile!=null  and data.mobile!=''">
+		      AND sys_user.mobile=#{data.mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="data.email!=null  and data.email!=''">
+		      AND sys_user.email=#{data.email,jdbcType=VARCHAR}
+		</if>
+		<if test="data.roleId!=null  and data.roleId!=''">
+             AND EXISTS(
+		         SELECT 1 FROM sys_user_role WHERE sys_user_role.user_id=sys_user.id AND sys_user_role.role_id=#{data.roleId,jdbcType=VARCHAR}
+		     )
+		</if>
+        ORDER BY sys_user.job_num ASC
+   </select>
+   <!--校验用户唯一性 -->
+   <select id="checkUserInfo"  parameterType="com.goshine.ptadmui.sys.entity.User"  resultType="com.goshine.ptadmui.sys.entity.User" >
+        select <include refid="columnList"/> from sys_user where sys_user.is_delete=0
+        <if test="id!=null and id!='' ">  
+            AND sys_user.id!=#{id,jdbcType=VARCHAR}
+        </if>
+        <if test="userName!=null and userName!='' ">  
+            AND sys_user.user_name=#{userName,jdbcType=VARCHAR} 
+        </if>
+    </select>
+    
+    <!--根据用户名查询用户记录-->
+    <select id="queryByUserName"  parameterType="java.lang.String"  resultMap="resultMap">
+		select sys_user.id,sys_user.user_name,sys_user.`password`,sys_user.login_count,sys_user.`status`,sys_user.last_login_time,sys_user.last_login_ip,
+		sys_user.`name`,sys_user.job_num,sys_user.position,sys_user.email,sys_user.mobile,sys_user.sex,sys_user.telephone,sys_user.phone_ext,
+		sys_user.remark,sys_user.executive_mode,sys_user.user_type
+		from sys_user
+		WHERE sys_user.is_delete=0  AND sys_user.status=0 AND sys_user.user_name=#{userName,jdbcType=VARCHAR}
+    </select>
+    
+    <!--根据角色ID查询用户信息列表-->
+    <select id="queryUserListByRoleId"  parameterType="java.lang.String"  resultMap="resultMap">
+		select sys_user.id,sys_user.user_name,sys_user.`password`,sys_user.login_count,sys_user.`status`,sys_user.last_login_time,sys_user.last_login_ip,
+		sys_user.`name`,sys_user.job_num,sys_user.position,sys_user.email,sys_user.mobile,sys_user.sex,sys_user.telephone,sys_user.phone_ext,
+		sys_user.remark,sys_user.executive_mode,sys_user.user_type
+		from sys_user
+		INNER JOIN sys_user_role ON sys_user_role.user_id=sys_user.id AND sys_user_role.role_id=#{roleId,jdbcType=VARCHAR}
+		WHERE sys_user.is_delete=0 
+		AND sys_user.status=0
+    </select>
+    <!--更新登录信息 -->
+    <update id="updateLoginInfo"  parameterType="com.goshine.ptadmui.sys.entity.User">
+	    update sys_user set
+        sys_user.login_count = #{loginCount,jdbcType=BIGINT},
+        sys_user.last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+        sys_user.last_login_ip = #{lastLoginIp,jdbcType=VARCHAR}
+	    where sys_user.id=#{id,jdbcType=VARCHAR}
+   </update>
+    
+    <!--修改密码-->
+    <update id="updatePasswordByParams"  parameterType="java.util.Map">
+	    update sys_user
+	    <set>
+	      <if test="password != null">
+	        password = #{password,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modifyUser != null">
+	        modify_user = #{modifyUser,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modifyDate != null">
+	        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+	      </if>
+	    </set>
+	    where sys_user.id=#{userId,jdbcType=VARCHAR}
+     </update>
+</mapper>

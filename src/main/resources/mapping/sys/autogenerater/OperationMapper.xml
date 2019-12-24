@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.OperationMapper">
+  <resultMap id="resultMap"  type="com.goshine.ptadmui.sys.entity.Operation">
+    <result column="id"  jdbcType="VARCHAR" property="id" />
+    <result column="name"  jdbcType="VARCHAR" property="name" />
+    <result column="remark"  jdbcType="VARCHAR" property="remark" />
+    <result column="oper_type"  jdbcType="VARCHAR" property="operType" />
+    <result column="url"  jdbcType="VARCHAR" property="url" />
+    <result column="menu_id"  jdbcType="VARCHAR" property="menuId" />
+    <result column="permission_id"  jdbcType="VARCHAR" property="permissionId" />
+  </resultMap>
+ 
+  <sql id="columnList">
+    id,name,remark,oper_type,url,menu_id
+  </sql>
+  
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.Operation">
+    insert into sys_operation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="operType != null">
+        oper_type,
+      </if>
+      <if test="url!= null">
+        url,
+      </if>
+      <if test="menuId!= null">
+        menu_id,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="modifyDate != null">
+        modify_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="operType != null">
+        #{operType,jdbcType=VARCHAR},
+      </if>
+      <if test="url!= null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId!=null">
+        #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.Operation">
+    update sys_operation
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="operType != null">
+        oper_type = #{operType,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId!=null">
+        menu_id=#{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where sys_operation.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!--删除 -->
+  <delete id="deleteByParams" parameterType="java.util.Map">
+       update sys_operation set sys_operation.is_delete=1,sys_operation.modify_user=#{modifyUser,jdbcType=BIGINT},
+       sys_operation.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+       WHERE sys_operation.id IN
+       <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+		   #{item}
+	   </foreach>
+  </delete>
+  
+  <select id="queryById" parameterType="String" resultType="com.goshine.ptadmui.sys.entity.Operation" >
+      select <include refid="columnList"/> from sys_operation where sys_operation.id=#{id,jdbcType=VARCHAR}
+  </select>
+  
+   <!--根据MenuId查询操作列表-->
+   <select id="queryListByMenuId"  parameterType="java.lang.String"  resultMap="resultMap" >
+       SELECT sys_operation.id,sys_operation.`name`,sys_operation.remark,sys_operation.oper_type,sys_operation.url FROM sys_operation 
+       WHERE sys_operation.is_delete=0
+       AND sys_operation.menu_id=#{menuId,jdbcType=VARCHAR}
+       ORDER BY sys_operation.name ASC
+   </select>
+    
+   <!--根据条件查询-->
+   <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.Operation"  resultMap="resultMap" >
+       SELECT sys_operation.id,sys_operation.`name`,sys_operation.remark,sys_operation.oper_type,sys_operation.url,sys_operation.menu_id FROM sys_operation 
+       WHERE sys_operation.is_delete=0
+       <if test="menuId!=null and menuId!='' ">
+		     AND sys_operation.menu_id=#{menuId,jdbcType=VARCHAR}
+	   </if>
+	   <if test="operType!=null and operType!='' ">
+		     AND sys_operation.oper_type=#{operType,jdbcType=VARCHAR}
+	   </if>
+	   <if test="name!=null and name!='' ">
+		     AND sys_operation.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+	   </if>
+       ORDER BY sys_operation.name ASC
+   </select>
+    
+    <!--分页查询-->
+    <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT sys_operation.id,sys_operation.`name`,sys_operation.remark,sys_operation.oper_type,sys_operation.url FROM sys_operation 
+       WHERE sys_operation.is_delete=0
+       <if test="data.menuId!=null and data.menuId!='' ">
+		     AND sys_operation.menu_id=#{data.menuId,jdbcType=VARCHAR}
+	   </if>
+	   <if test="data.operType!=null and data.operType!='' ">
+		     AND sys_operation.oper_type=#{data.operType,jdbcType=VARCHAR}
+	   </if>
+	   <if test="name!=null and name!='' ">
+		     AND sys_operation.name LIKE CONCAT('%',#{data.name,jdbcType=VARCHAR},'%')
+	   </if>
+       ORDER BY sys_operation.name ASC
+    </select>
+    
+    <!--根据菜单ID左关联查询权限操作列表-->
+    <select id="queryPermissionOperationListByMenuId"  resultMap="resultMap" >
+        SELECT sys_operation.id,sys_operation.`name`,sys_operation.oper_type,sys_operation.url,sys_permission_operation.permission_id FROM sys_operation
+		LEFT JOIN sys_permission_operation ON sys_permission_operation.operation_id=sys_operation.id AND sys_permission_operation.permission_id=#{permissionId,jdbcType=VARCHAR}
+		WHERE sys_operation.is_delete=0
+		AND sys_operation.menu_id=#{menuId,jdbcType=VARCHAR}
+    </select>
+    
+    <!--根据用户ID查询权限操作列表-->
+    <select id="queryOperationListByUserId"  resultMap="resultMap" >
+        SELECT sys_operation.id,sys_operation.`name`,sys_operation.url,sys_operation.menu_id FROM sys_operation
+		WHERE sys_operation.is_delete=0
+		AND EXISTS(
+		    SELECT 1 FROM sys_role_permission
+		    INNER JOIN sys_permission_operation ON sys_permission_operation.permission_id=sys_role_permission.permission_id
+		    INNER JOIN sys_user_role ON sys_user_role.role_id=sys_role_permission.role_id AND sys_user_role.user_id=#{userId,jdbcType=VARCHAR}
+		    WHERE sys_permission_operation.operation_id=sys_operation.id
+		)
+    </select>
+</mapper>

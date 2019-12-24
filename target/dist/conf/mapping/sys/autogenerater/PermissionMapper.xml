@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.PermissionMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.Permission">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="role_id" jdbcType="VARCHAR" property="roleId" />
+  </resultMap>
+  
+  <sql id="columnList">
+    id,name,remark
+  </sql>
+  
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.Permission">
+    insert into sys_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="modifyDate != null">
+        modify_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.Permission">
+    update sys_permission
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null">
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+     where sys_permission.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!--根据主键ID集合或菜单ID集合批量删除 -->
+  <delete id="deleteByParams" parameterType="java.util.Map">
+       update sys_permission set sys_permission.is_delete=1,sys_permission.modify_user=#{modifyUser,jdbcType=BIGINT},
+       sys_permission.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+       WHERE 1=1
+       <if test="ids!=null">
+	       AND sys_permission.id IN
+	       <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			 #{item}
+	       </foreach>
+       </if>
+   </delete>
+   
+   <select id="queryById" parameterType="String" resultType="com.goshine.ptadmui.sys.entity.Permission" >
+        select <include refid="columnList"/> from sys_permission where sys_permission.id=#{id,jdbcType=VARCHAR}
+    </select>
+    
+    <!--根据条件查询-->
+    <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.Permission"  resultMap="resultMap" >
+        SELECT sys_permission.id,sys_permission.`name`,sys_permission.remark FROM sys_permission
+        WHERE sys_permission.is_delete=0
+		<if test="name!=null and name!='' ">  
+		      AND sys_permission.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+		</if>
+        ORDER BY sys_permission.name ASC
+    </select>
+    
+    <!--分页查询-->
+    <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT sys_permission.id,sys_permission.`name`,sys_permission.remark FROM sys_permission
+        WHERE sys_permission.is_delete=0
+		<if test="data.name!=null and data.name!='' ">
+		      AND sys_permission.name LIKE CONCAT('%',#{data.name,jdbcType=VARCHAR},'%')
+		</if>
+        ORDER BY sys_permission.name ASC
+    </select>
+    
+    <!--根据角色ID集合查询角色拥有的权限-->
+    <select id="queryPermissionListByRoleIds"  parameterType="java.util.List"  resultMap="resultMap" >
+        SELECT sys_permission.id,sys_permission.`name`,sys_permission.remark FROM sys_permission
+		INNER JOIN sys_role_permission ON sys_role_permission.permission_id=sys_permission.id
+		WHERE sys_permission.is_delete=0
+		AND sys_role_permission.role_id IN
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+		      #{item}
+        </foreach>
+    </select>
+    
+    <!--根据角色ID左关联查询权限列表信息 -->
+    <select id="queryPermissionListByRoleId"  parameterType="java.lang.String"  resultMap="resultMap" >
+        SELECT DISTINCT sys_permission.id,sys_permission.`name`,sys_role_permission.role_id FROM sys_permission
+		LEFT JOIN sys_role_permission ON sys_role_permission.permission_id=sys_permission.id AND sys_role_permission.role_id=#{roleId,jdbcType=VARCHAR}
+		WHERE sys_permission.is_delete=0
+    </select>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <context id="prod">
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin" />
+        <plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin" />
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+
+        <commentGenerator>
+            <property name="suppressDate" value="true" />
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+
+        <!-- jdbc连接 -->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"  connectionURL="jdbc:mysql://localhost:3306/admui-v2?serverTimezone=Hongkong&amp;useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false"  userId="root"  password="123456" />
+        <!--mode-->
+        <javaModelGenerator targetPackage="com.goshine.ptadmui.sys.entity"  targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!--生成映射文件存放位置-->
+        <sqlMapGenerator targetPackage="mapping" targetProject="src/main/resources" >
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!--生成Dao类存放位置-->
+        <javaClientGenerator targetPackage="com.goshine.ptadmui.sys.mapper"  targetProject="src/main/java" type="XMLMAPPER" >
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        <!--生成table 先建表 后生成 勿随意覆盖本身table 避免功能缺失  测试 自己找其他表测试 by zxm-->
+        <!--table tableName="sys_menu" domainObjectName="Menu"
+              enableCountByExample="false"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_operation" domainObjectName="Operation"
+              enableCountByExample="false"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_permission" domainObjectName="Permission"
+              enableCountByExample="true"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_permission_operation" domainObjectName="PermissionOperation"
+              enableCountByExample="false"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_role_group" domainObjectName="RoleGroup"
+              enableCountByExample="false"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_role_permission" domainObjectName="RolePermission"
+              enableCountByExample="false"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_user_role" domainObjectName="UserRole"
+              enableCountByExample="true"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_role" domainObjectName="Role"
+              enableCountByExample="true"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+        <table tableName="sys_message" domainObjectName="Message"
+              enableCountByExample="true"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_log" domainObjectName="Log"
+              enableCountByExample="true"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+         <table tableName="sys_log_config" domainObjectName="LogConfig"
+              enableCountByExample="true"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="true"
+              selectByExampleQueryId="true"
+         />
+        <table tableName="sys_display_setting" domainObjectName="DisplaySetting"
+              enableCountByExample="false"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="false"
+              selectByExampleQueryId="false"
+         /-->
+        <!--table tableName="sys_blacklist" domainObjectName="BlackList"
+              enableCountByExample="false"
+              enableUpdateByExample="true"
+              enableDeleteByExample="true"
+              enableSelectByExample="false"
+              selectByExampleQueryId="false"
+         /-->
+        <table tableName="demo_employee" domainObjectName="Employee"
+               enableCountByExample="false"
+               enableUpdateByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"
+        />
+    </context>
+</generatorConfiguration>

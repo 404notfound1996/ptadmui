@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.UserRoleMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.UserRole">
+    <result column="user_id"  jdbcType="VARCHAR"  property="userId" />
+    <result column="role_id"  jdbcType="VARCHAR"  property="roleId" />
+  </resultMap>
+ 
+ <delete id="deleteByParams"  parameterType="java.util.Map">
+    delete from sys_user_role where 1=1
+    <if test="userId!= null  and userId!=''">
+          and sys_user_role.user_id=#{userId,jdbcType=VARCHAR}
+    </if>
+    <if test="roleId!= null  and roleId!=''">
+          and sys_user_role.role_id=#{roleId,jdbcType=VARCHAR}
+    </if>
+  </delete>
+  
+  <delete id="batchDeleteByParams"  parameterType="java.util.Map">
+    delete from sys_user_role where 1=1
+    <if test="userIds!= null">
+          and sys_user_role.user_id IN
+          <foreach item="item" index="index" collection="userIds" open="(" separator="," close=")">
+		  	#{item}
+          </foreach>
+    </if>
+    <if test="roleIds!= null">
+          and sys_user_role.role_id IN
+          <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+		  		#{item}
+          </foreach>
+    </if>
+  </delete>
+  
+  <!--批量为用户分配角色 -->
+  <insert id="batchInsertWithRole">
+	   insert into sys_user_role(user_id,role_id) values 
+	   <foreach collection="list"  item="item"  separator=",">
+	      (#{userId,jdbcType=VARCHAR},#{item,jdbcType=VARCHAR})
+	   </foreach>	 
+	</insert>
+	
+	<!--批量为用户分配角色 -->
+  <insert id="batchInsertWithUser">
+	   insert into sys_user_role(user_id,role_id) values 
+	   <foreach collection="list"  item="item"  separator=",">
+	      (#{item,jdbcType=VARCHAR},#{roleId,jdbcType=VARCHAR})
+	   </foreach>	 
+	</insert>
+</mapper>

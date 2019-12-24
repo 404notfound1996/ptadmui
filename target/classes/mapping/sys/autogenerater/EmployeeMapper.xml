@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.EmployeeMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.Employee">
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="base" jdbcType="VARCHAR" property="base" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="hire_date" jdbcType="DATE" property="hireDate" />
+    <result column="salary" jdbcType="DECIMAL" property="salary" />
+  </resultMap>
+  
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+    delete from demo_employee where demo_employee.employee_id IN
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+		 #{item}
+     </foreach>
+  </delete>
+  
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.Employee">
+    insert into demo_employee
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="base != null">
+        base,
+      </if>
+      <if test="age != null">
+        age,
+      </if>
+      <if test="hireDate != null">
+        hire_date,
+      </if>
+      <if test="salary != null">
+        salary,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="base != null">
+        #{base,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="hireDate != null">
+        #{hireDate,jdbcType=DATE},
+      </if>
+      <if test="salary != null">
+        #{salary,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.Employee">
+    update demo_employee
+    <set>
+      <if test="employeeId != null">
+        employee_id = #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="base != null">
+        base = #{base,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="hireDate != null">
+        hire_date = #{hireDate,jdbcType=DATE},
+      </if>
+      <if test="salary != null">
+        salary = #{salary,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where demo_employee.employee_id=#{employeeId,jdbcType=BIGINT}
+  </update>
+  
+    <!--分页查询-->
+    <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT demo_employee.employee_id,demo_employee.`name`,demo_employee.title,demo_employee.base,demo_employee.age,demo_employee.hire_date,demo_employee.salary 
+        FROM demo_employee WHERE 1=1
+        <if test="data.employeeId!=null and data.employeeId!='' ">  
+		      AND demo_employee.employee_id=#{data.employeeId,jdbcType=VARCHAR}
+		</if>
+        <if test="data.name!=null and data.name!='' ">  
+		      AND demo_employee.`name` LIKE CONCAT('%',#{data.name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="data.title!=null and data.title!='' ">  
+		      AND demo_employee.title LIKE CONCAT(#{data.title,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="data.base!=null and data.base!='' ">  
+		      AND demo_employee.base LIKE CONCAT(#{data.base,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="data.hireDate!=null  and data.hireDate!=''">
+		      AND demo_employee.hire_date>=STR_TO_DATE(#{data.hireDate,jdbcType=VARCHAR},'%Y-%m-%d')
+		</if>
+    </select>
+</mapper>

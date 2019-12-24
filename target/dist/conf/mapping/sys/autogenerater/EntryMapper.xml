@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.EntryMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.Entry">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="entry_name" jdbcType="VARCHAR" property="entryName" />
+    <result column="entry_price" jdbcType="VARCHAR" property="entryPrice" />
+  </resultMap>
+  
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+    delete from demo_entry where demo_entry.id IN
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+		 #{item}
+     </foreach>
+  </delete>
+  
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.Entry">
+    insert into demo_entry
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="entryName != null">
+        entry_name,
+      </if>
+      <if test="entryPrice != null">
+        entry_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="entryName!= null">
+        #{entryName,jdbcType=VARCHAR},
+      </if>
+      <if test="entryPrice!= null">
+        #{entryPrice,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.Entry">
+    update demo_entry
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="entryName!= null">
+        entry_name = #{entryName,jdbcType=VARCHAR},
+      </if>
+      <if test="entryPrice != null">
+        entry_price = #{entryPrice,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where demo_entry.id=#{id,jdbcType=BIGINT}
+  </update>
+  
+    <!--分页查询-->
+    <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT demo_entry.id,demo_entry.entry_name,demo_entry.entry_price
+        FROM demo_entry WHERE 1=1
+        <if test="data.id!=null">  
+		      AND demo_entry.id=#{data.id,jdbcType=BIGINT}
+		</if>
+        <if test="data.entryName!=null and data.entryName!='' ">  
+		      AND demo_entry.entry_name LIKE CONCAT('%',#{data.entryName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="data.entryPrice!=null and data.entryPrice!='' ">  
+		      AND demo_entry.entry_price LIKE CONCAT(#{data.entryPrice,jdbcType=VARCHAR},'%')
+		</if>
+    </select>
+</mapper>

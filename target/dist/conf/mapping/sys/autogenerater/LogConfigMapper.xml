@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goshine.ptadmui.sys.mapper.LogConfigMapper">
+  <resultMap id="resultMap" type="com.goshine.ptadmui.sys.entity.LogConfig">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
+    <result column="modify_user" jdbcType="VARCHAR" property="modifyUser" />
+    <result column="modifyUserName" jdbcType="VARCHAR" property="modifyUserName" />
+  </resultMap>
+  
+  <sql id="columnList">
+      id,url,type,modify_user,modify_date
+  </sql>
+  
+  <!--删除 -->
+  <delete id="deleteByParams"  parameterType="java.util.Map">
+        update sys_log_config set sys_log_config.is_delete=1,sys_log_config.modify_user=#{modifyUser,jdbcType=VARCHAR},
+        sys_log_config.modify_date=#{modifyDate,jdbcType=TIMESTAMP}
+        WHERE sys_log_config.id IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			 #{item}
+	     </foreach>
+  </delete>
+  
+  <insert id="insert" parameterType="com.goshine.ptadmui.sys.entity.LogConfig">
+    insert into sys_log_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">sys_log_config.id,</if>
+      <if test="url != null">sys_log_config.url,</if>
+      <if test="type != null">sys_log_config.type,</if>
+      <if test="remark!= null">sys_log_config.remark,</if>
+      <if test="createUser!= null">sys_log_config.create_user,</if>
+      <if test="createDate!= null">sys_log_config.create_date,</if>
+      <if test="modifyUser!= null">sys_log_config.modify_user,</if>
+      <if test="modifyDate!= null">sys_log_config.modify_date,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">#{id,jdbcType=VARCHAR},</if>
+      <if test="url != null">#{url,jdbcType=VARCHAR},</if>
+      <if test="type != null">#{type,jdbcType=VARCHAR},</if>
+      <if test="remark!= null">#{remark,jdbcType=VARCHAR},</if>
+	  <if test="createUser!= null">#{createUser,jdbcType=VARCHAR},</if>
+	  <if test="createDate!= null">#{createDate,jdbcType=TIMESTAMP},</if>
+	  <if test="modifyUser!= null">#{modifyUser,jdbcType=VARCHAR},</if>
+	  <if test="modifyDate!= null">#{modifyDate,jdbcType=TIMESTAMP},</if>
+    </trim>
+  </insert>
+ 
+  <update id="update" parameterType="com.goshine.ptadmui.sys.entity.LogConfig">
+    update sys_log_config
+    <set>
+      <if test="id != null">
+            id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="url != null">
+            url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+            type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="remark!= null">
+            sys_log_config.remark=#{remark,jdbcType=VARCHAR},
+       </if>
+	   <if test="modifyUser!= null">
+            sys_log_config.modify_user=#{modifyUser,jdbcType=VARCHAR},
+       </if>
+	   <if test="modifyDate!=null">
+            sys_log_config.modify_date=#{modifyDate,jdbcType=TIMESTAMP},
+        </if>
+    </set>
+     WHERE sys_log_config.id=#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="queryById" parameterType="String" resultType="com.goshine.ptadmui.sys.entity.LogConfig" >
+        select <include refid="columnList"/> from sys_log_config where sys_log_config.is_delete=0 AND sys_log_config.id=#{id,jdbcType=VARCHAR}
+  </select>
+  
+  <!--根据条件查询-->
+  <select id="queryListByCond"  parameterType="com.goshine.ptadmui.sys.entity.LogConfig"  resultMap="resultMap" >
+        SELECT sys_log_config.id,sys_log_config.url,sys_log_config.type,sys_log_config.modify_user,sys_log_config.modify_date,sys_user.`name` modifyUserName FROM sys_log_config
+		LEFT JOIN sys_user ON sys_user.id=sys_log_config.modify_user AND sys_user.is_delete=0
+		WHERE sys_log_config.is_delete=0
+        ORDER BY sys_log_config.id ASC
+  </select>
+    
+   <!--分页查询-->
+   <select id="queryListByPage" parameterType="com.goshine.ptadmui.core.model.Page"  resultMap="resultMap" >
+        SELECT sys_log_config.id,sys_log_config.url,sys_log_config.type,sys_log_config.modify_user,sys_log_config.modify_date,sys_user.`name` modifyUserName FROM sys_log_config
+		LEFT JOIN sys_user ON sys_user.id=sys_log_config.modify_user AND sys_user.is_delete=0
+		WHERE sys_log_config.is_delete=0
+        ORDER BY sys_log_config.id ASC
+    </select>
+</mapper>
